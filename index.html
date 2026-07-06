@@ -1713,39 +1713,26 @@ async function uploadFileWithRetry(file, context, onProgress, maxAttempts) {
 }
 
 function uploadFileResumable(file, context, onProgress) {
-  return new Promise(async (resolve, reject) => {
+  return new Promise((resolve, reject) => {
     try {
-      // 1) Pede ao nosso servidor para abrir a sessão de upload no Drive.
-      //    Isso roda no back-end (não no navegador) porque a resposta do
-      //    Google traz um cabeçalho (Location) que o navegador não
-      //    consegue ler de outro domínio — o servidor não tem essa limitação.
-      const initRes = await fetch('/api/drive-session', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          client: current.name,
-          context,
-          filename: file.name,
-          mimeType: file.type || 'application/octet-stream',
-          size: file.size
-        })
+      const params = new URLSearchParams({
+        client: current.name,
+        context,
+        filename: file.name,
+        mimeType: file.type || 'application/octet-stream'
       });
-      if (!initRes.ok) {
-        const errBody = await initRes.json().catch(() => ({}));
-        reject(new Error('Não foi possível iniciar o envio: ' + (errBody.error || initRes.status)));
-        return;
-      }
-      const { uploadUrl } = await initRes.json();
-      if (!uploadUrl) { reject(new Error('O servidor não retornou uma URL de upload.')); return; }
 
-      // 2) Envia o arquivo inteiro direto para o Google (sem passar pelo Vercel).
+      // Envia o arquivo pro NOSSO domínio (mesma origem — sem restrição de
+      // CORS). É o nosso servidor que repassa os bytes pro Google por trás.
       const xhr = new XMLHttpRequest();
-      xhr.open('PUT', uploadUrl, true);
+      xhr.open('PUT', '/api/upload-stream?' + params.toString(), true);
       xhr.setRequestHeader('Content-Type', file.type || 'application/octet-stream');
       xhr.upload.onprogress = (e) => { if (e.lengthComputable) onProgress(e.loaded); };
       xhr.onload = () => {
-        if (xhr.status >= 200 && xhr.status < 300) { onProgress(file.size); resolve(); }
-        else reject(new Error('O Google recusou o arquivo (código ' + xhr.status + ').'));
+        if (xhr.status >= 200 && xhr.status < 300) { onProgress(file.size); resolve(); return; }
+        let msg = 'O servidor recusou o arquivo (código ' + xhr.status + ').';
+        try { const body = JSON.parse(xhr.responseText); if (body.error) msg = body.error; } catch (e) {}
+        reject(new Error(msg));
       };
       xhr.onerror = () => reject(new Error('Erro de rede durante o envio do arquivo.'));
       xhr.send(file);
