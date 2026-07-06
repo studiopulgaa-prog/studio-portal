@@ -1747,6 +1747,7 @@ function uploadFileResumable(file, context, onProgress) {
 
       const sendChunk = () => new Promise((res, rej) => {
         const end = Math.min(offset + UPLOAD_CHUNK_SIZE, total);
+        const isLastChunk = end >= total;
         const chunk = file.slice(offset, end);
         const xhr = new XMLHttpRequest();
         xhr.open('PUT', uploadUrl, true);
@@ -1757,7 +1758,25 @@ function uploadFileResumable(file, context, onProgress) {
           else if (xhr.status === 308) { offset = end; res(false); }
           else rej(new Error('O Google recusou o envio (código ' + xhr.status + ').'));
         };
-        xhr.onerror = () => rej(new Error('Erro de rede durante o envio do arquivo.'));
+        xhr.onerror = async () => {
+          // O navegador às vezes não consegue ler a resposta final do
+          // Google (uma inconsistência de CORS do lado deles), mesmo
+          // quando o arquivo chegou direitinho. Nesse caso, em vez de
+          // desistir, confirmamos direto com o nosso servidor se o
+          // arquivo realmente chegou no Drive antes de dar erro.
+          if (isLastChunk) {
+            try {
+              const verifyRes = await fetch('/api/verify-upload', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ client: current.name, context, filename: file.name })
+              });
+              const verifyData = await verifyRes.json().catch(() => ({}));
+              if (verifyRes.ok && verifyData.found) { onProgress(total); res(true); return; }
+            } catch (e) { /* segue para o erro abaixo */ }
+          }
+          rej(new Error('Erro de rede durante o envio do arquivo.'));
+        };
         xhr.send(chunk);
       });
 
