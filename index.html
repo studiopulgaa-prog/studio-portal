@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#1A0F0A">
 <title>Studio Pulga — Portal do Cliente</title>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=DM+Sans:wght@300;400;500;600&family=Josefin+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root {
   --cream: #F5EDE0;
@@ -21,6 +21,7 @@
   --red: #CC3333;
   --green: #4A7A46;
   --gold: #C07A3A;
+  --nicho: #8B5A7A;
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -28,7 +29,7 @@
 html, body {
   background: var(--cream);
   color: var(--ink);
-  font-family: 'DM Sans', sans-serif;
+  font-family: 'Plus Jakarta Sans', sans-serif;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
@@ -70,18 +71,18 @@ body::before {
 }
 
 .login-logo {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 3.2rem; font-weight: 300; letter-spacing: 0.06em;
+  font-family: 'DM Serif Display', serif;
+  font-size: 3.2rem; font-weight: 400; letter-spacing: 0.02em;
   color: var(--brown-dark);
   line-height: 1;
   margin-bottom: 6px;
 }
 
 .login-tagline {
-  font-family: 'Josefin Sans', sans-serif;
+  font-family: 'Plus Jakarta Sans', sans-serif;
   font-size: 0.6rem; letter-spacing: 4px;
   text-transform: uppercase; color: var(--muted);
-  font-weight: 400;
+  font-weight: 500;
 }
 
 .login-divider {
@@ -103,7 +104,7 @@ body::before {
 
 .login-label {
   display: block;
-  font-family: 'Josefin Sans', sans-serif;
+  font-family: 'Plus Jakarta Sans', sans-serif;
   font-size: 0.6rem; letter-spacing: 2.5px;
   text-transform: uppercase; color: var(--brown);
   margin-bottom: 10px; font-weight: 600;
@@ -113,7 +114,7 @@ body::before {
   width: 100%; padding: 14px 18px;
   border: 1.5px solid var(--border);
   border-radius: 12px;
-  font-family: 'DM Sans', sans-serif;
+  font-family: 'Plus Jakarta Sans', sans-serif;
   font-size: 1rem; color: var(--ink);
   background: rgba(245,237,224,0.5);
   outline: none;
@@ -131,8 +132,8 @@ body::before {
   width: 100%; padding: 15px;
   background: var(--brown-dark);
   color: white; border: none; border-radius: 12px;
-  font-family: 'Josefin Sans', sans-serif;
-  font-size: 0.7rem; font-weight: 600;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.7rem; font-weight: 700;
   letter-spacing: 3px; text-transform: uppercase;
   cursor: pointer;
   margin-top: 20px;
@@ -152,8 +153,8 @@ body::before {
   text-align: center;
 }
 
-/* ===== PORTAL ===== */
-#client-screen { display: none; position: relative; z-index: 1; }
+/* ===== PORTAL / ADMIN SCREENS ===== */
+#client-screen, #admin-screen { display: none; position: relative; z-index: 1; }
 
 /* TOP BAR */
 .top-bar {
@@ -167,9 +168,9 @@ body::before {
 }
 
 .top-logo {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'DM Serif Display', serif;
   font-size: 1.5rem; font-weight: 400;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.02em;
   color: var(--brown-dark);
 }
 
@@ -221,24 +222,29 @@ body::before {
   min-height: calc(100dvh - 172px);
 }
 
-/* WELCOME HERO */
+/* WELCOME HERO — saudação estilo C */
 .welcome-hero {
   padding: 40px 24px 32px;
   border-bottom: 1px solid var(--border);
 }
 .welcome-eyebrow {
-  font-family: 'Josefin Sans', sans-serif;
+  font-family: 'Plus Jakarta Sans', sans-serif;
   font-size: 0.58rem; letter-spacing: 3px;
   text-transform: uppercase; color: var(--muted);
-  margin-bottom: 8px;
+  margin-bottom: 10px; font-weight: 600;
 }
-.welcome-title {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 2.6rem; font-weight: 300;
+.welcome-greeting {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 1rem; font-weight: 500;
+  color: var(--muted);
+  margin-bottom: 2px;
+}
+.welcome-name {
+  font-family: 'DM Serif Display', serif;
+  font-size: 2.8rem; font-weight: 400;
   color: var(--brown-dark);
-  line-height: 1.1; margin-bottom: 10px;
+  line-height: 1.05; margin-bottom: 12px;
 }
-.welcome-title strong { font-weight: 600; }
 .welcome-sub {
   font-size: 0.85rem; color: var(--muted); max-width: 320px;
 }
@@ -247,23 +253,23 @@ body::before {
 .tab-panel { display: none; padding: 28px 20px 20px; animation: fadeUp 0.35s ease; }
 .tab-panel.active { display: block; }
 
-.panel-eyebrow {
-  font-family: 'Josefin Sans', sans-serif;
-  font-size: 0.58rem; letter-spacing: 3px;
-  text-transform: uppercase; color: var(--muted);
-  margin-bottom: 8px;
-}
+/* PANEL HEADER — títulos de seção estilo A: serif grande + subtítulo abaixo */
 .panel-title {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'DM Serif Display', serif;
   font-size: 2.2rem; font-weight: 400;
-  color: var(--brown-dark); margin-bottom: 4px;
+  color: var(--brown-dark); margin-bottom: 8px;
+}
+.panel-subtitle {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.86rem; color: var(--muted);
+  max-width: 340px; line-height: 1.5;
 }
 .panel-header { margin-bottom: 28px; }
 
 /* SECTION HEADING */
 .section-head {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 1.35rem; font-weight: 600;
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.35rem; font-weight: 400;
   color: var(--ink);
   margin-bottom: 14px; margin-top: 28px;
   display: flex; align-items: center; gap: 8px;
@@ -298,10 +304,10 @@ body::before {
   margin-top: 20px;
 }
 .tips-head {
-  font-family: 'Josefin Sans', sans-serif;
+  font-family: 'Plus Jakarta Sans', sans-serif;
   font-size: 0.62rem; letter-spacing: 2px;
   text-transform: uppercase; color: var(--brown);
-  margin-bottom: 12px; font-weight: 600;
+  margin-bottom: 12px; font-weight: 700;
 }
 .tips-list { list-style: none; }
 .tips-list li {
@@ -321,10 +327,10 @@ body::before {
   margin-top: 4px;
 }
 .trello-label {
-  font-family: 'Josefin Sans', sans-serif;
+  font-family: 'Plus Jakarta Sans', sans-serif;
   font-size: 0.58rem; letter-spacing: 3px;
   text-transform: uppercase; color: var(--muted);
-  margin-bottom: 6px;
+  margin-bottom: 6px; font-weight: 600;
 }
 .trello-title { font-size: 1rem; font-weight: 600; color: var(--ink); margin-bottom: 6px; }
 .trello-desc { font-size: 0.84rem; color: var(--muted); margin-bottom: 18px; line-height: 1.6; }
@@ -333,8 +339,8 @@ body::before {
   background: var(--brown-dark);
   color: white; text-decoration: none;
   padding: 11px 20px; border-radius: 10px;
-  font-family: 'Josefin Sans', sans-serif;
-  font-size: 0.65rem; font-weight: 600;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.65rem; font-weight: 700;
   letter-spacing: 2.5px; text-transform: uppercase;
   border: none; cursor: pointer;
   transition: all 0.25s ease;
@@ -360,25 +366,27 @@ body::before {
 .obra-name { font-size: 1rem; font-weight: 600; color: var(--ink); }
 .obra-sigla {
   background: var(--brown-dark); color: white;
-  font-family: 'Josefin Sans', sans-serif;
+  font-family: 'Plus Jakarta Sans', sans-serif;
   font-size: 0.6rem; letter-spacing: 2px;
   padding: 4px 10px; border-radius: 20px;
-  white-space: nowrap; flex-shrink: 0;
+  white-space: nowrap; flex-shrink: 0; font-weight: 600;
 }
-.obra-card-bottom { padding: 12px 18px; }
+.obra-card-bottom { padding: 12px 18px 18px; }
 .obra-addr { font-size: 0.82rem; color: var(--muted); line-height: 1.5; }
+.obra-meta { font-size: 0.78rem; color: var(--muted); margin-top: 8px; display: flex; gap: 6px; align-items: flex-start; line-height: 1.5; }
+.obra-notes { font-style: italic; }
 .btn-delete {
-  margin-top: 10px; width: 100%;
+  margin-top: 12px; width: 100%;
   padding: 8px; border: 1px solid rgba(204,51,51,0.2);
   border-radius: 8px; background: rgba(204,51,51,0.05);
   color: var(--red); font-size: 0.72rem;
   font-weight: 600; letter-spacing: 1px;
   text-transform: uppercase; cursor: pointer;
-  transition: all 0.2s ease; font-family: 'Josefin Sans', sans-serif;
+  transition: all 0.2s ease; font-family: 'Plus Jakarta Sans', sans-serif;
 }
 .btn-delete:hover { background: rgba(204,51,51,0.1); }
 
-/* ADD OBRA FORM */
+/* ADD OBRA / ADMIN FORM */
 .add-obra-section {
   margin-top: 28px;
   background: rgba(255,255,255,0.6);
@@ -386,14 +394,14 @@ body::before {
   border-radius: 16px; padding: 24px;
 }
 .add-obra-title {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 1.4rem; font-weight: 600;
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.4rem; font-weight: 400;
   color: var(--brown-dark); margin-bottom: 20px;
   display: flex; align-items: center; gap: 8px;
 }
 .field-label {
   display: block;
-  font-family: 'Josefin Sans', sans-serif;
+  font-family: 'Plus Jakarta Sans', sans-serif;
   font-size: 0.58rem; letter-spacing: 2px;
   text-transform: uppercase; color: var(--brown);
   margin-bottom: 7px; font-weight: 600;
@@ -402,7 +410,7 @@ body::before {
   width: 100%; padding: 12px 14px;
   border: 1.5px solid var(--border);
   border-radius: 10px;
-  font-family: 'DM Sans', sans-serif;
+  font-family: 'Plus Jakarta Sans', sans-serif;
   font-size: 0.9rem; color: var(--ink);
   background: rgba(245,237,224,0.4);
   outline: none;
@@ -427,15 +435,15 @@ body::before {
 
 .equip-group-title {
   display: flex; align-items: center; gap: 8px;
-  font-family: 'Josefin Sans', sans-serif;
+  font-family: 'Plus Jakarta Sans', sans-serif;
   font-size: 0.62rem; letter-spacing: 2.5px;
   text-transform: uppercase; color: var(--brown);
-  font-weight: 600; margin-bottom: 8px; margin-top: 4px;
+  font-weight: 700; margin-bottom: 8px; margin-top: 4px;
 }
 .equip-group-title svg { stroke: var(--brown); flex-shrink: 0; }
 
 .equip-option-badge {
-  font-family: 'Josefin Sans', sans-serif;
+  font-family: 'Plus Jakarta Sans', sans-serif;
   font-size: 0.55rem; letter-spacing: 1.5px;
   text-transform: uppercase; font-weight: 600;
   color: var(--muted); margin-bottom: 6px;
@@ -457,7 +465,6 @@ body::before {
 .equip-tag-import { background: rgba(110,44,20,0.07); color: var(--brown); }
 .equip-tag-ml { background: rgba(192,122,58,0.1); color: var(--gold); }
 
-/* EQUIP CARD updated for vertical layout */
 .equip-card {
   background: rgba(255,255,255,0.65);
   border: 1px solid var(--border);
@@ -472,7 +479,7 @@ body::before {
   padding: 8px 16px;
   border: 1.5px solid var(--border);
   border-radius: 8px;
-  font-family: 'Josefin Sans', sans-serif;
+  font-family: 'Plus Jakarta Sans', sans-serif;
   font-size: 0.6rem; letter-spacing: 1.5px;
   text-transform: uppercase; color: var(--brown);
   text-decoration: none; font-weight: 600;
@@ -520,6 +527,29 @@ body::before {
 .status-ok { background: rgba(74,122,70,0.08); color: var(--green); border: 1px solid rgba(74,122,70,0.2); }
 .status-err { background: rgba(204,51,51,0.08); color: var(--red); border: 1px solid rgba(204,51,51,0.2); }
 
+/* MODAL — upload progress */
+.modal-overlay {
+  position: fixed; inset: 0; z-index: 300;
+  background: rgba(26,15,10,0.35);
+  backdrop-filter: blur(4px);
+  display: none; align-items: center; justify-content: center;
+  padding: 24px;
+}
+.modal-overlay.active { display: flex; }
+.modal-box {
+  background: white; border-radius: 20px;
+  padding: 36px 28px; max-width: 340px; width: 100%;
+  text-align: center;
+  box-shadow: 0 32px 80px rgba(26,15,10,0.25);
+  animation: scaleIn 0.25s ease;
+}
+.modal-icon { font-size: 2.2rem; margin-bottom: 14px; }
+.modal-title { font-family: 'DM Serif Display', serif; font-size: 1.3rem; color: var(--brown-dark); margin-bottom: 20px; line-height: 1.3; }
+.modal-progress-track { height: 8px; border-radius: 20px; background: rgba(110,44,20,0.1); overflow: hidden; margin-bottom: 10px; }
+.modal-progress-fill { height: 100%; width: 0%; background: var(--brown-dark); transition: width 0.2s ease; border-radius: 20px; }
+.modal-percent { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.8rem; color: var(--muted); margin-bottom: 18px; font-weight: 600; }
+.modal-ok { width: 100%; justify-content: center; }
+
 /* CALENDAR */
 .cal-legend {
   display: flex; flex-wrap: wrap; gap: 14px;
@@ -541,11 +571,11 @@ body::before {
 .cal-nav-btn:hover { background: white; border-color: var(--brown); }
 .cal-month { flex: 1; text-align: center; }
 .cal-month-name {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'DM Serif Display', serif;
   font-size: 1.6rem; font-weight: 400; color: var(--brown-dark);
 }
 .cal-month-year {
-  font-family: 'Josefin Sans', sans-serif;
+  font-family: 'Plus Jakarta Sans', sans-serif;
   font-size: 0.58rem; letter-spacing: 3px;
   text-transform: uppercase; color: var(--muted);
 }
@@ -553,7 +583,7 @@ body::before {
 .cal-header-row { display: grid; grid-template-columns: repeat(7,1fr); gap: 2px; margin-bottom: 6px; }
 .cal-dow {
   text-align: center; padding: 6px 0;
-  font-family: 'Josefin Sans', sans-serif;
+  font-family: 'Plus Jakarta Sans', sans-serif;
   font-size: 0.58rem; letter-spacing: 1.5px;
   text-transform: uppercase; color: var(--muted);
 }
@@ -576,12 +606,23 @@ body::before {
 .cal-day.holiday { background: rgba(110,44,20,0.1); }
 .cal-day.commercial { background: rgba(192,122,58,0.12); }
 .cal-day.event-day { background: rgba(74,122,70,0.09); }
+.cal-day.nicho { background: rgba(139,90,122,0.12); }
 .cal-day:not(.empty):hover { transform: translateY(-1px); box-shadow: 0 4px 10px rgba(110,44,20,0.1); }
 .cal-dots { display: flex; gap: 2px; margin-top: 2px; }
 .dot { width: 4px; height: 4px; border-radius: 50%; }
 .dot-feriado { background: var(--brown); }
 .dot-comercial { background: var(--gold); }
 .dot-evento { background: var(--green); }
+.dot-nicho { background: var(--nicho); }
+
+@media (max-width: 380px) {
+  .cal-day { font-size: 0.72rem; border-radius: 8px; }
+  .cal-month-name { font-size: 1.35rem; }
+  .dot { width: 3px; height: 3px; }
+  .cal-dow { font-size: 0.5rem; }
+  .welcome-name { font-size: 2.3rem; }
+  .panel-title { font-size: 1.9rem; }
+}
 
 .popover {
   position: fixed; bottom: 96px;
@@ -605,25 +646,26 @@ body::before {
 }
 .popover-close:hover { background: rgba(110,44,20,0.14); transform: rotate(90deg); }
 .popover-date {
-  font-family: 'Josefin Sans', sans-serif;
+  font-family: 'Plus Jakarta Sans', sans-serif;
   font-size: 0.58rem; letter-spacing: 2.5px;
   text-transform: uppercase; color: var(--muted); margin-bottom: 8px;
 }
 .popover-name {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 1.4rem; font-weight: 600; color: var(--ink);
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.4rem; font-weight: 400; color: var(--ink);
   margin-bottom: 6px;
 }
 .popover-desc { font-size: 0.84rem; color: var(--muted); line-height: 1.6; margin-bottom: 14px; }
 .popover-badge {
   display: inline-block; padding: 4px 12px;
   border-radius: 20px; font-size: 0.65rem;
-  font-family: 'Josefin Sans', sans-serif;
+  font-family: 'Plus Jakarta Sans', sans-serif;
   letter-spacing: 1.5px; text-transform: uppercase; font-weight: 600;
 }
 .badge-holiday { background: rgba(110,44,20,0.1); color: var(--brown); }
 .badge-comercial { background: rgba(192,122,58,0.12); color: var(--gold); }
 .badge-event { background: rgba(74,122,70,0.1); color: var(--green); }
+.badge-nicho { background: rgba(139,90,122,0.12); color: var(--nicho); }
 
 /* APPLE DOCK */
 .dock-wrap {
@@ -667,9 +709,9 @@ body::before {
 }
 .dock-item.active .dock-icon span { filter: brightness(10); }
 .dock-label {
-  font-family: 'Josefin Sans', sans-serif;
+  font-family: 'Plus Jakarta Sans', sans-serif;
   font-size: 0.48rem; letter-spacing: 1.5px;
-  text-transform: uppercase; font-weight: 600;
+  text-transform: uppercase; font-weight: 700;
   color: var(--muted);
   opacity: 0; transform: translateY(4px);
   transition: all 0.2s ease;
@@ -685,7 +727,6 @@ body::before {
 }
 .dock-item.active .dock-dot { opacity: 1; }
 
-/* Magnification on hover — pure CSS */
 .dock:hover .dock-item { transform: scaleY(0.95); }
 .dock-item:hover { transform: scaleY(1.22) !important; z-index: 2; }
 .dock-item:hover .dock-label { opacity: 1; transform: translateY(0); }
@@ -718,7 +759,7 @@ body::before {
   </div>
 </div>
 
-<!-- PORTAL -->
+<!-- PORTAL DO CLIENTE -->
 <div id="client-screen">
   <div class="top-bar">
     <div class="top-logo">Studio Pulga</div>
@@ -737,15 +778,16 @@ body::before {
   <div class="main-content">
     <div class="welcome-hero">
       <div class="welcome-eyebrow">Bem-vindo ao portal</div>
-      <div class="welcome-title">Olá, <strong id="client-name">Cliente</strong></div>
+      <div class="welcome-greeting">Olá,</div>
+      <div class="welcome-name" id="client-name">Cliente</div>
       <div class="welcome-sub">Seu espaço completo com manuais, calendário, equipamentos e obras.</div>
     </div>
 
     <!-- POSTAGENS -->
     <div class="tab-panel active" id="panel-postagens">
       <div class="panel-header">
-        <div class="panel-eyebrow">Calendário Editorial</div>
         <div class="panel-title">Suas postagens</div>
+        <div class="panel-subtitle">Acompanhe todo o conteúdo produzido pelo Studio Pulga, organizado e atualizado em tempo real.</div>
       </div>
       <div class="trello-box">
         <div class="trello-label">Conteúdo em tempo real</div>
@@ -760,8 +802,8 @@ body::before {
     <!-- MANUAL -->
     <div class="tab-panel" id="panel-manual">
       <div class="panel-header">
-        <div class="panel-eyebrow">Manual de Gravação</div>
         <div class="panel-title">Tudo que você precisa</div>
+        <div class="panel-subtitle">Guia rápido de figurino e captação para gravações com qualidade profissional.</div>
       </div>
 
       <div class="section-head"><span>🚫</span> O que NÃO gravar</div>
@@ -816,14 +858,14 @@ body::before {
     <!-- ENVIAR -->
     <div class="tab-panel" id="panel-enviar">
       <div class="panel-header">
-        <div class="panel-eyebrow">Enviar Material</div>
         <div class="panel-title">Seus arquivos</div>
+        <div class="panel-subtitle">Envie fotos, vídeos e documentos direto para o Drive do studio, sem limite de espera.</div>
       </div>
       <input type="file" id="fileInput" multiple style="display:none;">
       <div class="drop-zone" id="dropZone" onclick="document.getElementById('fileInput').click()">
         <span class="drop-icon">📁</span>
         <div class="drop-text">Clique ou arraste arquivos</div>
-        <div class="drop-sub">Fotos, vídeos e documentos</div>
+        <div class="drop-sub">Fotos, vídeos e documentos — até 1GB por arquivo</div>
       </div>
       <div class="field-group">
         <label class="field-label" for="context">Contexto</label>
@@ -839,8 +881,8 @@ body::before {
     <!-- OBRAS -->
     <div class="tab-panel" id="panel-obras">
       <div class="panel-header">
-        <div class="panel-eyebrow">Seus Projetos</div>
         <div class="panel-title">Obras</div>
+        <div class="panel-subtitle">Gerencie os projetos e endereços cadastrados para a equipe de gravação.</div>
       </div>
       <div class="obras-grid" id="obras-grid">
         <div class="loading-obras">Carregando obras...</div>
@@ -882,6 +924,20 @@ body::before {
           <label class="field-label">Sigla da Obra</label>
           <input type="text" id="newObraSigla" class="field-input" placeholder="Ex: AC" style="text-transform:uppercase;">
         </div>
+        <div class="field-row">
+          <div>
+            <label class="field-label">Senha da porta</label>
+            <input type="text" id="newObraDoorPassword" class="field-input" placeholder="Ex: 2024#">
+          </div>
+          <div>
+            <label class="field-label">Data de início</label>
+            <input type="date" id="newObraStartDate" class="field-input">
+          </div>
+        </div>
+        <div class="field-group">
+          <label class="field-label">Observação</label>
+          <input type="text" id="newObraNotes" class="field-input" placeholder="Ex: Portão dos fundos, tocar campainha 2x">
+        </div>
         <button onclick="addNewObra()" class="btn-primary" style="width:100%;justify-content:center;">
           ✦ Adicionar Obra
         </button>
@@ -891,13 +947,14 @@ body::before {
     <!-- CALENDÁRIO -->
     <div class="tab-panel" id="panel-calendario">
       <div class="panel-header">
-        <div class="panel-eyebrow">Datas Importantes</div>
         <div class="panel-title">Calendário</div>
+        <div class="panel-subtitle">Feriados, datas comerciais e eventos do setor para planejar suas gravações.</div>
       </div>
       <div class="cal-legend">
         <div class="legend-item"><div class="legend-dot" style="background:var(--brown);"></div>Feriado</div>
         <div class="legend-item"><div class="legend-dot" style="background:var(--gold);"></div>Comercial</div>
         <div class="legend-item"><div class="legend-dot" style="background:var(--green);"></div>Evento</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--nicho);"></div>Arquitetura/Design</div>
       </div>
       <div class="cal-nav">
         <button class="cal-nav-btn" onclick="calPrev()">❮</button>
@@ -919,8 +976,8 @@ body::before {
     <!-- EQUIPAMENTOS -->
     <div class="tab-panel" id="panel-equipamentos">
       <div class="panel-header">
-        <div class="panel-eyebrow">Recomendados pelo Studio</div>
         <div class="panel-title">Equipamentos</div>
+        <div class="panel-subtitle">Recomendações testadas pelo time do Studio Pulga para gravações com qualidade profissional.</div>
       </div>
       <div class="equip-list">
 
@@ -1014,8 +1071,14 @@ body::before {
       <button class="dock-item active" onclick="switchTab('postagens',this)" data-tab="postagens">
         <div class="dock-icon">
           <span>
-            <svg viewBox="0 0 24 24" fill="currentColor" style="width:1.4rem;height:1.4rem;color:var(--brown)">
-              <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zM5.838 12a6.162 6.162 0 1 1 12.324 0 6.162 6.162 0 0 1-12.324 0zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm4.965-10.322a1.44 1.44 0 1 1 2.881.001 1.44 1.44 0 0 1-2.881-.001z"/>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1.4rem;height:1.4rem;color:var(--brown)">
+              <path d="M12 2a10 10 0 0 1 8.66 5"/>
+              <path d="M20.66 7 22 5.7" opacity="0.35"/>
+              <path d="M21.5 11.5a10 10 0 0 1-.4 3.2" opacity="0.55"/>
+              <path d="M18.6 19.6a10 10 0 0 1-14.2-1" opacity="0.75"/>
+              <path d="M2.9 13.7A10 10 0 0 1 5.3 5.3" opacity="0.9"/>
+              <path d="M12 8v8"/>
+              <path d="M8 12h8"/>
             </svg>
           </span>
         </div>
@@ -1023,30 +1086,119 @@ body::before {
         <div class="dock-dot"></div>
       </button>
       <button class="dock-item" onclick="switchTab('manual',this)" data-tab="manual">
-        <div class="dock-icon"><span>📒</span></div>
+        <div class="dock-icon">
+          <span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1.4rem;height:1.4rem;color:var(--brown)">
+              <rect x="4" y="3" width="16" height="18" rx="2"/>
+              <path d="M8 3v18"/>
+              <path d="M4 8h1"/><path d="M4 12h1"/><path d="M4 16h1"/>
+              <path d="M12 8h5"/><path d="M12 12h5"/><path d="M12 16h3"/>
+            </svg>
+          </span>
+        </div>
         <div class="dock-label">Manual</div>
         <div class="dock-dot"></div>
       </button>
       <button class="dock-item" onclick="switchTab('enviar',this)" data-tab="enviar">
-        <div class="dock-icon"><span>📤</span></div>
+        <div class="dock-icon">
+          <span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1.4rem;height:1.4rem;color:var(--brown)">
+              <path d="M4 5a2 2 0 0 1 2-2h3l2 2h7a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2Z"/>
+              <path d="M12 10v6"/>
+              <path d="m9.5 13.5 2.5 2.5 2.5-2.5"/>
+            </svg>
+          </span>
+        </div>
         <div class="dock-label">Enviar</div>
         <div class="dock-dot"></div>
       </button>
       <button class="dock-item" onclick="switchTab('obras',this)" data-tab="obras">
-        <div class="dock-icon"><span>👷</span></div>
+        <div class="dock-icon">
+          <span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1.4rem;height:1.4rem;color:var(--brown)">
+              <path d="M4 18v-3a8 8 0 0 1 16 0v3"/>
+              <path d="M2 18h20"/>
+              <path d="M12 7V4"/>
+              <path d="M6.5 10.5V8"/>
+              <path d="M17.5 10.5V8"/>
+            </svg>
+          </span>
+        </div>
         <div class="dock-label">Obras</div>
         <div class="dock-dot"></div>
       </button>
       <button class="dock-item" onclick="switchTab('calendario',this)" data-tab="calendario">
-        <div class="dock-icon"><span>🗓️</span></div>
+        <div class="dock-icon">
+          <span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1.4rem;height:1.4rem;color:var(--brown)">
+              <rect x="3" y="5" width="18" height="16" rx="2"/>
+              <path d="M8 3v4"/><path d="M16 3v4"/><path d="M3 10h18"/>
+              <path d="M11.5 14.5h1v4"/>
+            </svg>
+          </span>
+        </div>
         <div class="dock-label">Agenda</div>
         <div class="dock-dot"></div>
       </button>
       <button class="dock-item" onclick="switchTab('equipamentos',this)" data-tab="equipamentos">
-        <div class="dock-icon"><span>⚙️</span></div>
+        <div class="dock-icon">
+          <span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1.4rem;height:1.4rem;color:var(--brown)">
+              <circle cx="12" cy="12" r="10"/>
+              <path d="m14.31 8 5.74 9.94"/>
+              <path d="M9.69 8h11.48"/>
+              <path d="m7.38 12 5.74-9.94"/>
+              <path d="M9.69 16 3.95 6.06"/>
+              <path d="M14.31 16H2.83"/>
+              <path d="m16.62 12-5.74 9.94"/>
+            </svg>
+          </span>
+        </div>
         <div class="dock-label">Equip.</div>
         <div class="dock-dot"></div>
       </button>
+    </div>
+  </div>
+</div>
+
+<!-- PAINEL ADMIN -->
+<div id="admin-screen">
+  <div class="top-bar">
+    <div class="top-logo">Studio Pulga — Admin</div>
+    <button class="menu-btn" onclick="handleLogout()" title="Sair">🚪</button>
+  </div>
+  <div class="main-content" style="margin-bottom: 40px;">
+    <div class="welcome-hero">
+      <div class="welcome-eyebrow">Painel de gestão</div>
+      <div class="welcome-greeting">Gerenciar</div>
+      <div class="welcome-name">Clientes</div>
+      <div class="welcome-sub">Cadastre, edite e remova os acessos dos clientes do portal.</div>
+    </div>
+    <div class="tab-panel active" style="padding:28px 20px 20px;">
+      <div id="admin-sync-status" style="display:none;margin-bottom:14px;padding:10px 14px;border-radius:10px;font-size:0.8rem;text-align:center;"></div>
+      <div class="obras-grid" id="clientes-grid">
+        <div class="loading-obras">Carregando clientes...</div>
+      </div>
+
+      <div class="add-obra-section">
+        <div class="add-obra-title" id="admin-form-title">+ Adicionar Cliente</div>
+        <div class="field-group">
+          <label class="field-label">Código de acesso</label>
+          <input type="text" id="adminCode" class="field-input" placeholder="Ex: adriana" style="text-transform:lowercase;">
+        </div>
+        <div class="field-group">
+          <label class="field-label">Nome do cliente</label>
+          <input type="text" id="adminName" class="field-input" placeholder="Ex: Adriana Paiva">
+        </div>
+        <div class="field-group">
+          <label class="field-label">Link do Trello</label>
+          <input type="text" id="adminTrello" class="field-input" placeholder="https://trello.com/...">
+        </div>
+        <div style="display:flex; gap:10px;">
+          <button onclick="saveCliente()" class="btn-primary" style="flex:1;justify-content:center;" id="adminSaveBtn">✦ Salvar Cliente</button>
+          <button onclick="cancelEditCliente()" class="btn-primary" style="flex:0 0 auto;background:transparent;color:var(--brown);border:1.5px solid var(--border);box-shadow:none;display:none;" id="adminCancelBtn">Cancelar</button>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -1060,55 +1212,127 @@ body::before {
   <span class="popover-badge" id="popoverTag"></span>
 </div>
 
+<!-- MODAL UPLOAD -->
+<div class="modal-overlay" id="uploadModal">
+  <div class="modal-box">
+    <div class="modal-icon" id="modalIcon">↑</div>
+    <div class="modal-title" id="modalTitle">Enviando arquivos...</div>
+    <div class="modal-progress-track"><div class="modal-progress-fill" id="modalProgressFill"></div></div>
+    <div class="modal-percent" id="modalPercent">0%</div>
+    <button class="btn-primary modal-ok" id="modalOkBtn" style="display:none;" onclick="closeUploadModal()">OK</button>
+  </div>
+</div>
+
 <script>
-// ── SUPABASE CONFIG ── preencha após criar o projeto ──
+// ── SUPABASE CONFIG ──────────────────────────────────────────
 const SUPABASE_URL = "https://ixclkelqjpfkucejbzuq.supabase.co";
 const SUPABASE_ANON_KEY = "sb_publishable_36e05dIX8zj8aI-4O4IKJA_1eTEYkNI";
+const ADMIN_CODE = "Studio2801";
 
-const DB = {
-  adriana:{name:'Adriana',nicho:'arquiteta',trello:'https://trello.com/c/sO3dcO23'},
-  bonnarieng:{name:'Bonnari',nicho:'engenharia',trello:'https://trello.com/b/sO3dcO23/bonnari'},
-  abcpg:{name:'ABC',nicho:'construcao',trello:''},
-  nasc:{name:'Nasc',nicho:'odontologia',trello:''},
-  stylo:{name:'Stylo',nicho:'moveis',trello:''},
-  leandra:{name:'Leandra',nicho:'arquiteta',trello:''},
-  tais:{name:'Tais',nicho:'arquiteta',trello:''},
-  fanny:{name:'Fanny',nicho:'arquiteta',trello:''},
-  farrucas:{name:'Farrucas',nicho:'engenharia',trello:''}
-};
 const MONTHS = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
 const DATAS = [
+  // Feriados Nacionais
+  {d:'2026-01-01',tipo:'feriado',titulo:'Confraternização Universal'},
+  {d:'2026-02-03',tipo:'feriado',titulo:'Aniversário de São Paulo'},
+  {d:'2026-02-17',tipo:'feriado',titulo:'Carnaval'},
+  {d:'2026-02-18',tipo:'feriado',titulo:'Carnaval'},
+  {d:'2026-04-03',tipo:'feriado',titulo:'Sexta-feira Santa'},
+  {d:'2026-04-21',tipo:'feriado',titulo:'Tiradentes'},
   {d:'2026-05-01',tipo:'feriado',titulo:'Dia do Trabalho'},
   {d:'2026-06-04',tipo:'feriado',titulo:'Corpus Christi'},
-  {d:'2026-07-09',tipo:'feriado',titulo:'Rev. Constitucionalista'},
+  {d:'2026-07-09',tipo:'feriado',titulo:'Revolução Constitucionalista'},
   {d:'2026-09-07',tipo:'feriado',titulo:'Independência do Brasil'},
   {d:'2026-10-12',tipo:'feriado',titulo:'Nossa Senhora Aparecida'},
   {d:'2026-11-02',tipo:'feriado',titulo:'Finados'},
   {d:'2026-11-15',tipo:'feriado',titulo:'Proclamação da República'},
   {d:'2026-11-20',tipo:'feriado',titulo:'Consciência Negra'},
   {d:'2026-12-25',tipo:'feriado',titulo:'Natal'},
-  {d:'2026-09-15',tipo:'comercial',titulo:'Dia do Cliente'},
-  {d:'2026-11-27',tipo:'comercial',titulo:'Black Friday'},
+  // Datas Comerciais
   {d:'2026-05-10',tipo:'comercial',titulo:'Dia das Mães'},
   {d:'2026-06-12',tipo:'comercial',titulo:'Dia dos Namorados'},
   {d:'2026-08-09',tipo:'comercial',titulo:'Dia dos Pais'},
-  {d:'2026-06-02',tipo:'evento',titulo:'CASACOR SP'}
+  {d:'2026-09-15',tipo:'comercial',titulo:'Dia do Cliente'},
+  {d:'2026-11-27',tipo:'comercial',titulo:'Black Friday'},
+  {d:'2026-12-21',tipo:'comercial',titulo:'Promoções de fim de ano'},
+  // Nicho Arquitetura / Design / Engenharia
+  {d:'2026-02-15',tipo:'nicho',titulo:'Dia do Arquiteto Paisagista'},
+  {d:'2026-03-08',tipo:'nicho',titulo:'Dia Internacional da Mulher'},
+  {d:'2026-03-15',tipo:'nicho',titulo:'Dia do Consumidor'},
+  {d:'2026-06-15',tipo:'nicho',titulo:'Dia do Designer de Interiores'},
+  {d:'2026-08-11',tipo:'nicho',titulo:'Dia do Engenheiro'},
+  {d:'2026-12-15',tipo:'nicho',titulo:'Dia do Arquiteto'}
 ];
 
 let current = null, currentCode = '', selectedFiles = [], calYear = 2026, calMonth = 4;
+let clientesCache = [], editingClienteId = null;
 
-function handleLogin() {
-  const code = document.getElementById('code').value.trim().toLowerCase();
-  if (DB[code]) {
-    current = DB[code];
-    currentCode = code;
-    localStorage.setItem('sp_code', code);
-    setup();
-    document.getElementById('login-screen').style.display = 'none';
-    document.getElementById('client-screen').style.display = 'block';
-  } else {
+// ── Supabase helpers ──────────────────────────────────────────
+function sbHeaders() {
+  return {
+    'Content-Type': 'application/json',
+    'apikey': SUPABASE_ANON_KEY,
+    'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+    'Prefer': 'return=representation'
+  };
+}
+
+function formatDateBR(iso) {
+  if (!iso) return '';
+  const parts = iso.split('-');
+  if (parts.length !== 3) return iso;
+  return `${parts[2]}/${parts[1]}/${parts[0]}`;
+}
+
+// ── LOGIN ─────────────────────────────────────────────────────
+async function handleLogin() {
+  const raw = document.getElementById('code').value.trim();
+  if (!raw) return;
+  document.getElementById('login-error').style.display = 'none';
+
+  if (raw === ADMIN_CODE) {
+    localStorage.setItem('sp_code', raw);
+    enterAdmin();
+    return;
+  }
+
+  const code = raw.toLowerCase();
+  const btn = document.querySelector('.login-btn');
+  const originalLabel = btn.textContent;
+  btn.textContent = 'Entrando...'; btn.style.pointerEvents = 'none';
+
+  try {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/clientes?code=eq.${encodeURIComponent(code)}&select=*`, { headers: sbHeaders() });
+    if (!res.ok) throw new Error(await res.text());
+    const data = await res.json();
+    if (data && data.length > 0) {
+      current = data[0];
+      currentCode = code;
+      localStorage.setItem('sp_code', code);
+      enterClient();
+    } else {
+      document.getElementById('login-error').textContent = 'Código não encontrado. Verifique e tente novamente.';
+      document.getElementById('login-error').style.display = 'block';
+    }
+  } catch (e) {
+    console.error(e);
+    document.getElementById('login-error').textContent = 'Erro de conexão com o banco. Tente novamente.';
     document.getElementById('login-error').style.display = 'block';
   }
+  btn.textContent = originalLabel; btn.style.pointerEvents = 'auto';
+}
+
+function enterClient() {
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('admin-screen').style.display = 'none';
+  document.getElementById('client-screen').style.display = 'block';
+  setup();
+}
+
+function enterAdmin() {
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('client-screen').style.display = 'none';
+  document.getElementById('admin-screen').style.display = 'block';
+  loadClientesAdmin();
 }
 
 function setup() {
@@ -1121,18 +1345,7 @@ function setup() {
   renderCal();
 }
 
-// ── Supabase helpers ──────────────────────────────────────────
-function sbHeaders() {
-  return {
-    'Content-Type': 'application/json',
-    'apikey': SUPABASE_ANON_KEY,
-    'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
-    'Prefer': 'return=representation'
-  };
-}
-
 function syncStatus(msg, type) {
-  // type: 'loading' | 'ok' | 'err' | ''
   const el = document.getElementById('sync-status');
   if (!msg) { el.style.display = 'none'; return; }
   const styles = {
@@ -1144,17 +1357,10 @@ function syncStatus(msg, type) {
   el.textContent = msg;
 }
 
-// ── LOAD ─────────────────────────────────────────────────────
+// ── OBRAS: LOAD ──────────────────────────────────────────────
 async function loadObras() {
   const grid = document.getElementById('obras-grid');
   grid.innerHTML = '<div class="loading-obras">Carregando obras...</div>';
-
-  if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
-    renderObrasLocal([]);
-    syncStatus('⚠️ Banco não configurado — obras salvas só localmente', 'err');
-    return;
-  }
-
   try {
     const res = await fetch(
       `${SUPABASE_URL}/rest/v1/obras?client_code=eq.${encodeURIComponent(currentCode)}&order=created_at.desc`,
@@ -1166,8 +1372,8 @@ async function loadObras() {
     syncStatus('', '');
   } catch(e) {
     console.error(e);
-    syncStatus('Sem conexão com banco — exibindo dados locais', 'err');
-    renderObrasLocal([]);
+    syncStatus('Sem conexão com banco — tente recarregar a página.', 'err');
+    renderObrasRemote([]);
   }
 }
 
@@ -1189,18 +1395,16 @@ function renderObrasRemote(obras) {
       </div>
       <div class="obra-card-bottom">
         <div class="obra-addr">${addr}</div>
+        ${o.start_date ? `<div class="obra-meta">📅 <span>Início: ${formatDateBR(o.start_date)}</span></div>` : ''}
+        ${o.door_password ? `<div class="obra-meta">🔑 <span>Senha da porta: ${o.door_password}</span></div>` : ''}
+        ${o.notes ? `<div class="obra-meta obra-notes">📝 <span>${o.notes}</span></div>` : ''}
         <button class="btn-delete" onclick="deleteObra('${o.id}')">Remover obra</button>
       </div>`;
     grid.appendChild(card);
   });
 }
 
-function renderObrasLocal(obras) {
-  const grid = document.getElementById('obras-grid');
-  grid.innerHTML = '<div class="empty"><span class="empty-icon">📦</span><div class="empty-text">Nenhuma obra cadastrada.<br>Adicione uma abaixo.</div></div>';
-}
-
-// ── ADD ──────────────────────────────────────────────────────
+// ── OBRAS: ADD ───────────────────────────────────────────────
 async function addNewObra() {
   const name         = document.getElementById('newObraName').value.trim();
   const city         = document.getElementById('newObraCity').value.trim();
@@ -1209,14 +1413,13 @@ async function addNewObra() {
   const number       = document.getElementById('newObraNumber').value.trim();
   const complement   = document.getElementById('newObraComplement').value.trim();
   const sigla        = document.getElementById('newObraSigla').value.trim().toUpperCase();
+  const doorPassword = document.getElementById('newObraDoorPassword').value.trim();
+  const notes        = document.getElementById('newObraNotes').value.trim();
+  let startDate      = document.getElementById('newObraStartDate').value;
+  if (!startDate) startDate = new Date().toLocaleDateString('sv-SE');
 
   if (!name || !city || !street || !number || !sigla) {
     syncStatus('Preencha os campos obrigatórios: nome, cidade, rua, número e sigla.', 'err');
-    return;
-  }
-
-  if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
-    syncStatus('⚠️ Configure o Supabase para salvar permanentemente.', 'err');
     return;
   }
 
@@ -1226,12 +1429,16 @@ async function addNewObra() {
     const res = await fetch(`${SUPABASE_URL}/rest/v1/obras`, {
       method: 'POST',
       headers: sbHeaders(),
-      body: JSON.stringify({ client_code: currentCode, name, city, neighborhood, street, number, complement, sigla })
+      body: JSON.stringify({
+        client_code: currentCode, name, city, neighborhood, street, number, complement, sigla,
+        door_password: doorPassword || null, notes: notes || null, start_date: startDate
+      })
     });
     if (!res.ok) throw new Error(await res.text());
 
-    ['newObraName','newObraCity','newObraNeighborhood','newObraStreet',
-     'newObraNumber','newObraComplement','newObraSigla'].forEach(id => document.getElementById(id).value = '');
+    ['newObraName','newObraCity','newObraNeighborhood','newObraStreet','newObraNumber',
+     'newObraComplement','newObraSigla','newObraDoorPassword','newObraNotes','newObraStartDate']
+      .forEach(id => document.getElementById(id).value = '');
 
     syncStatus('✓ Obra salva com sucesso!', 'ok');
     setTimeout(() => syncStatus('', ''), 3000);
@@ -1243,15 +1450,11 @@ async function addNewObra() {
   }
 }
 
-// ── DELETE ───────────────────────────────────────────────────
 async function deleteObra(id) {
   if (!confirm('Remover esta obra permanentemente?')) return;
   syncStatus('Removendo...', 'loading');
   try {
-    const res = await fetch(`${SUPABASE_URL}/rest/v1/obras?id=eq.${id}`, {
-      method: 'DELETE',
-      headers: sbHeaders()
-    });
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/obras?id=eq.${id}`, { method: 'DELETE', headers: sbHeaders() });
     if (!res.ok) throw new Error(await res.text());
     syncStatus('✓ Obra removida.', 'ok');
     setTimeout(() => syncStatus('', ''), 2000);
@@ -1261,6 +1464,127 @@ async function deleteObra(id) {
   }
 }
 
+// ── ADMIN: CLIENTES ────────────────────────────────────────────
+function adminSyncStatus(msg, type) {
+  const el = document.getElementById('admin-sync-status');
+  if (!msg) { el.style.display = 'none'; return; }
+  const styles = {
+    loading: 'background:rgba(110,44,20,0.07);color:var(--muted);border:1px solid var(--border);',
+    ok:      'background:rgba(74,122,70,0.08);color:var(--green);border:1px solid rgba(74,122,70,0.2);',
+    err:     'background:rgba(204,51,51,0.08);color:var(--red);border:1px solid rgba(204,51,51,0.2);'
+  };
+  el.style.cssText = (styles[type] || styles.loading) + 'display:block;padding:10px 14px;border-radius:10px;font-size:0.8rem;text-align:center;';
+  el.textContent = msg;
+}
+
+async function loadClientesAdmin() {
+  const grid = document.getElementById('clientes-grid');
+  grid.innerHTML = '<div class="loading-obras">Carregando clientes...</div>';
+  try {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/clientes?select=*&order=name.asc`, { headers: sbHeaders() });
+    if (!res.ok) throw new Error(await res.text());
+    clientesCache = await res.json();
+    renderClientesAdmin();
+  } catch(e) {
+    console.error(e);
+    grid.innerHTML = '<div class="empty"><span class="empty-icon">⚠️</span><div class="empty-text">Erro ao carregar clientes. Verifique a conexão com o Supabase.</div></div>';
+  }
+}
+
+function renderClientesAdmin() {
+  const grid = document.getElementById('clientes-grid');
+  if (!clientesCache.length) {
+    grid.innerHTML = '<div class="empty"><span class="empty-icon">👥</span><div class="empty-text">Nenhum cliente cadastrado ainda.<br>Adicione um abaixo.</div></div>';
+    return;
+  }
+  grid.innerHTML = '';
+  clientesCache.forEach(c => {
+    const card = document.createElement('div');
+    card.className = 'obra-card';
+    card.innerHTML = `
+      <div class="obra-card-top">
+        <div class="obra-name">${c.name}</div>
+        <div class="obra-sigla">${c.code}</div>
+      </div>
+      <div class="obra-card-bottom">
+        <div class="obra-addr">${c.trello ? 'Trello vinculado' : 'Sem Trello vinculado'}</div>
+        <div style="display:flex; gap:8px; margin-top:12px;">
+          <button class="btn-primary" style="flex:1;justify-content:center;padding:8px;font-size:0.6rem;" onclick="editCliente('${c.id}')">Editar</button>
+          <button class="btn-delete" style="flex:1;margin-top:0;" onclick="deleteCliente('${c.id}')">Excluir</button>
+        </div>
+      </div>`;
+    grid.appendChild(card);
+  });
+}
+
+function editCliente(id) {
+  const c = clientesCache.find(x => String(x.id) === String(id));
+  if (!c) return;
+  editingClienteId = id;
+  document.getElementById('adminCode').value = c.code;
+  document.getElementById('adminName').value = c.name;
+  document.getElementById('adminTrello').value = c.trello || '';
+  document.getElementById('admin-form-title').textContent = '✎ Editar Cliente';
+  document.getElementById('adminSaveBtn').textContent = '✦ Salvar Alterações';
+  document.getElementById('adminCancelBtn').style.display = 'inline-flex';
+  window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+}
+
+function cancelEditCliente() {
+  editingClienteId = null;
+  document.getElementById('adminCode').value = '';
+  document.getElementById('adminName').value = '';
+  document.getElementById('adminTrello').value = '';
+  document.getElementById('admin-form-title').textContent = '+ Adicionar Cliente';
+  document.getElementById('adminSaveBtn').textContent = '✦ Salvar Cliente';
+  document.getElementById('adminCancelBtn').style.display = 'none';
+}
+
+async function saveCliente() {
+  const code = document.getElementById('adminCode').value.trim().toLowerCase();
+  const name = document.getElementById('adminName').value.trim();
+  const trello = document.getElementById('adminTrello').value.trim();
+
+  if (!code || !name) { adminSyncStatus('Preencha ao menos código e nome.', 'err'); return; }
+
+  adminSyncStatus(editingClienteId ? 'Salvando alterações...' : 'Cadastrando cliente...', 'loading');
+  try {
+    let res;
+    if (editingClienteId) {
+      res = await fetch(`${SUPABASE_URL}/rest/v1/clientes?id=eq.${editingClienteId}`, {
+        method: 'PATCH', headers: sbHeaders(), body: JSON.stringify({ code, name, trello })
+      });
+    } else {
+      res = await fetch(`${SUPABASE_URL}/rest/v1/clientes`, {
+        method: 'POST', headers: sbHeaders(), body: JSON.stringify({ code, name, trello })
+      });
+    }
+    if (!res.ok) throw new Error(await res.text());
+    adminSyncStatus('✓ Salvo com sucesso!', 'ok');
+    setTimeout(() => adminSyncStatus('', ''), 2500);
+    cancelEditCliente();
+    await loadClientesAdmin();
+  } catch(e) {
+    console.error(e);
+    adminSyncStatus('Erro ao salvar. Verifique se o código já existe.', 'err');
+  }
+}
+
+async function deleteCliente(id) {
+  if (!confirm('Remover este cliente permanentemente? Ele perderá o acesso ao portal.')) return;
+  adminSyncStatus('Removendo...', 'loading');
+  try {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/clientes?id=eq.${id}`, { method: 'DELETE', headers: sbHeaders() });
+    if (!res.ok) throw new Error(await res.text());
+    adminSyncStatus('✓ Cliente removido.', 'ok');
+    setTimeout(() => adminSyncStatus('', ''), 2000);
+    await loadClientesAdmin();
+  } catch(e) {
+    adminSyncStatus('Erro ao remover.', 'err');
+  }
+}
+
+// ── NAV ─────────────────────────────────────────────────────
 function switchTab(id, btn) {
   document.querySelectorAll('.dock-item').forEach(b => b.classList.remove('active'));
   document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
@@ -1283,14 +1607,16 @@ function handleLink(type) {
   if (links[type] && links[type] !== '#') window.open(links[type], '_blank');
 }
 function handleLogout() {
-  localStorage.removeItem('sp_code'); current = null;
+  localStorage.removeItem('sp_code');
+  current = null; currentCode = ''; editingClienteId = null;
   document.getElementById('client-screen').style.display = 'none';
+  document.getElementById('admin-screen').style.display = 'none';
   document.getElementById('login-screen').style.display = 'flex';
   document.getElementById('code').value = '';
 }
 
-// FILES
-document.addEventListener('DOMContentLoaded', () => {
+// ── FILES ─────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('fileInput').addEventListener('change', e => {
     selectedFiles = Array.from(e.target.files); renderFileList();
   });
@@ -1299,9 +1625,20 @@ document.addEventListener('DOMContentLoaded', () => {
   dz.addEventListener('dragleave', () => dz.classList.remove('dragging'));
   dz.addEventListener('drop', e => { e.preventDefault(); dz.classList.remove('dragging'); selectedFiles = Array.from(e.dataTransfer.files); renderFileList(); });
 
+  document.addEventListener('keypress', e => {
+    if (e.key === 'Enter' && document.getElementById('login-screen').style.display !== 'none') handleLogin();
+  });
+
   const saved = localStorage.getItem('sp_code');
-  if (saved && DB[saved]) { current = DB[saved]; currentCode = saved; setup(); document.getElementById('login-screen').style.display = 'none'; document.getElementById('client-screen').style.display = 'block'; }
-  document.addEventListener('keypress', e => { if (e.key === 'Enter' && !current) handleLogin(); });
+  if (saved === ADMIN_CODE) { enterAdmin(); return; }
+  if (saved) {
+    try {
+      const res = await fetch(`${SUPABASE_URL}/rest/v1/clientes?code=eq.${encodeURIComponent(saved)}&select=*`, { headers: sbHeaders() });
+      const data = await res.json();
+      if (data && data.length > 0) { current = data[0]; currentCode = saved; enterClient(); }
+      else localStorage.removeItem('sp_code');
+    } catch(e) { /* mantém tela de login */ }
+  }
 });
 
 function renderFileList() {
@@ -1317,27 +1654,100 @@ function renderFileList() {
   document.getElementById('uploadBtn').style.display = selectedFiles.length > 0 ? 'flex' : 'none';
 }
 function removeFile(i) { selectedFiles.splice(i, 1); renderFileList(); }
+
+// ── UPLOAD DIRETO AO DRIVE (resumable, sem passar pelo Vercel) ─
 async function handleUpload() {
   if (!selectedFiles.length) return;
-  const btn = document.getElementById('uploadBtn');
-  const context = document.getElementById('context').value || 'Sem contexto';
-  btn.style.opacity = '0.6'; btn.style.pointerEvents = 'none'; btn.textContent = 'Enviando...';
-  const formData = new FormData();
-  formData.append('client', current.name); formData.append('context', context);
-  selectedFiles.forEach(f => formData.append('files', f));
-  const msg = document.getElementById('statusMsg');
+  const context = document.getElementById('context').value.trim() || 'Sem contexto';
+
+  openUploadModal();
+  const totalBytes = selectedFiles.reduce((s, f) => s + f.size, 0) || 1;
+  let uploadedBytesBase = 0;
+
   try {
-    const res = await fetch('/api/upload-drive', { method: 'POST', body: formData });
-    if (res.ok) {
-      msg.textContent = '✓ Enviado com sucesso!'; msg.className = 'status-msg status-ok'; msg.style.display = 'block';
-      selectedFiles = []; document.getElementById('context').value = ''; renderFileList();
-      setTimeout(() => switchTab('manual'), 2000);
+    const initRes = await fetch('/api/drive-session', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ client: current.name, context })
+    });
+    if (!initRes.ok) throw new Error('Falha ao iniciar sessão com o Drive');
+    const { accessToken, folderId } = await initRes.json();
+
+    for (const file of selectedFiles) {
+      await uploadFileResumable(file, accessToken, folderId, (loaded) => {
+        const pct = Math.min(100, Math.round(((uploadedBytesBase + loaded) / totalBytes) * 100));
+        setModalProgress(pct);
+      });
+      uploadedBytesBase += file.size;
     }
-  } catch (e) { msg.textContent = 'Erro na conexão. Tente novamente.'; msg.className = 'status-msg status-err'; msg.style.display = 'block'; }
-  btn.style.opacity = '1'; btn.style.pointerEvents = 'auto'; btn.innerHTML = '<span>↑</span> Enviar Arquivos';
+
+    setModalProgress(100);
+    showModalSuccess();
+    selectedFiles = [];
+    document.getElementById('context').value = '';
+    renderFileList();
+  } catch (e) {
+    console.error(e);
+    showModalError('Erro ao enviar. Verifique sua conexão e tente novamente.');
+  }
 }
 
-// CALENDAR
+function uploadFileResumable(file, accessToken, folderId, onProgress) {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const sessionRes = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=resumable&fields=id,webViewLink', {
+        method: 'POST',
+        headers: {
+          'Authorization': 'Bearer ' + accessToken,
+          'Content-Type': 'application/json; charset=UTF-8',
+          'X-Upload-Content-Type': file.type || 'application/octet-stream',
+          'X-Upload-Content-Length': String(file.size)
+        },
+        body: JSON.stringify({ name: file.name, parents: [folderId] })
+      });
+      if (!sessionRes.ok) { reject(new Error('Falha ao iniciar upload: ' + sessionRes.status)); return; }
+      const uploadUrl = sessionRes.headers.get('Location');
+      if (!uploadUrl) { reject(new Error('Sessão de upload sem URL de destino')); return; }
+
+      const xhr = new XMLHttpRequest();
+      xhr.open('PUT', uploadUrl, true);
+      xhr.setRequestHeader('Content-Type', file.type || 'application/octet-stream');
+      xhr.upload.onprogress = (e) => { if (e.lengthComputable) onProgress(e.loaded); };
+      xhr.onload = () => {
+        if (xhr.status >= 200 && xhr.status < 300) { onProgress(file.size); resolve(); }
+        else reject(new Error('Upload falhou: ' + xhr.status));
+      };
+      xhr.onerror = () => reject(new Error('Erro de rede durante o upload'));
+      xhr.send(file);
+    } catch (e) { reject(e); }
+  });
+}
+
+function openUploadModal() {
+  document.getElementById('modalTitle').textContent = 'Enviando arquivos...';
+  document.getElementById('modalPercent').textContent = '0%';
+  document.getElementById('modalProgressFill').style.width = '0%';
+  document.getElementById('modalOkBtn').style.display = 'none';
+  document.getElementById('modalIcon').textContent = '↑';
+  document.getElementById('uploadModal').classList.add('active');
+}
+function setModalProgress(pct) {
+  document.getElementById('modalPercent').textContent = pct + '%';
+  document.getElementById('modalProgressFill').style.width = pct + '%';
+}
+function showModalSuccess() {
+  document.getElementById('modalTitle').textContent = 'Enviado com sucesso!';
+  document.getElementById('modalIcon').textContent = '✓';
+  document.getElementById('modalOkBtn').style.display = 'inline-flex';
+}
+function showModalError(msg) {
+  document.getElementById('modalTitle').textContent = msg;
+  document.getElementById('modalIcon').textContent = '⚠️';
+  document.getElementById('modalOkBtn').style.display = 'inline-flex';
+}
+function closeUploadModal() { document.getElementById('uploadModal').classList.remove('active'); }
+
+// ── CALENDAR ──────────────────────────────────────────────────
 function calPrev() {
   calMonth--; if (calMonth < 0) { calMonth = 11; calYear--; }
   if (calYear < 2026 || (calYear === 2026 && calMonth < 4)) { calYear = 2026; calMonth = 4; }
@@ -1374,6 +1784,7 @@ function renderCal() {
       const types = new Set(events.map(e => e.tipo));
       if (types.has('feriado')) cls += ' holiday';
       else if (types.has('comercial')) cls += ' commercial';
+      else if (types.has('nicho')) cls += ' nicho';
       else cls += ' event-day';
     }
     const cell = document.createElement('div'); cell.className = cls;
@@ -1393,8 +1804,8 @@ function showPopover(day, events) {
   document.getElementById('popoverDate').textContent = date;
   document.getElementById('popoverTitle').textContent = events.map(e => e.titulo).join(' · ');
   document.getElementById('popoverDesc').textContent = events.map(e => e.desc || '').join(' ');
-  const labels = { feriado:'Feriado Nacional', comercial:'Data Comercial', evento:'Evento', regular:'Dia Comum' };
-  const cls = { feriado:'badge-holiday', comercial:'badge-comercial', evento:'badge-event', regular:'' };
+  const labels = { feriado:'Feriado Nacional', comercial:'Data Comercial', nicho:'Arquitetura/Design', evento:'Evento', regular:'Dia Comum' };
+  const cls = { feriado:'badge-holiday', comercial:'badge-comercial', nicho:'badge-nicho', evento:'badge-event', regular:'' };
   const tag = document.getElementById('popoverTag');
   tag.textContent = labels[type] || 'Dia Comum'; tag.className = 'popover-badge ' + (cls[type] || '');
   document.getElementById('popover').classList.add('active');
