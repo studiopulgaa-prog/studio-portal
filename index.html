@@ -1674,7 +1674,7 @@ async function handleUpload() {
 
   try {
     for (const file of selectedFiles) {
-      await uploadFileResumable(file, context, (loaded) => {
+      await uploadFileWithRetry(file, context, (loaded) => {
         const pct = Math.min(100, Math.round(((uploadedBytesBase + loaded) / totalBytes) * 100));
         setModalProgress(pct);
       });
@@ -1690,6 +1690,26 @@ async function handleUpload() {
     console.error(e);
     showModalError(e.message || 'Erro ao enviar. Verifique sua conexão e tente novamente.');
   }
+}
+
+// Tenta enviar o arquivo até 2 vezes — se a primeira tentativa falhar por
+// instabilidade de rede, tenta de novo automaticamente antes de desistir.
+async function uploadFileWithRetry(file, context, onProgress, maxAttempts) {
+  maxAttempts = maxAttempts || 2;
+  let lastError;
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    try {
+      await uploadFileResumable(file, context, onProgress);
+      return;
+    } catch (e) {
+      lastError = e;
+      if (attempt < maxAttempts) {
+        onProgress(0);
+        await new Promise(r => setTimeout(r, 1200));
+      }
+    }
+  }
+  throw lastError;
 }
 
 function uploadFileResumable(file, context, onProgress) {
