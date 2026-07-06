@@ -222,6 +222,12 @@ body::before {
   min-height: calc(100dvh - 172px);
 }
 
+@media (min-width: 640px) {
+  .main-content { max-width: 480px; margin-left: auto; margin-right: auto; }
+  .top-bar { left: 50%; transform: translateX(-50%); max-width: 480px; width: 100%; right: auto; }
+  .login-wrap { max-width: 400px; }
+}
+
 /* WELCOME HERO — saudação estilo C */
 .welcome-hero {
   padding: 40px 24px 32px;
@@ -580,16 +586,18 @@ body::before {
   text-transform: uppercase; color: var(--muted);
 }
 
-.cal-header-row { display: grid; grid-template-columns: repeat(7,1fr); gap: 2px; margin-bottom: 6px; }
+.cal-header-row { display: grid; grid-template-columns: repeat(7,minmax(0,1fr)); gap: 2px; margin-bottom: 6px; width: 100%; }
 .cal-dow {
+  min-width: 0;
   text-align: center; padding: 6px 0;
   font-family: 'Plus Jakarta Sans', sans-serif;
   font-size: 0.58rem; letter-spacing: 1.5px;
   text-transform: uppercase; color: var(--muted);
 }
 
-.cal-grid { display: grid; grid-template-columns: repeat(7,1fr); gap: 3px; }
+.cal-grid { display: grid; grid-template-columns: repeat(7,minmax(0,1fr)); gap: 3px; width: 100%; }
 .cal-day {
+  min-width: 0;
   aspect-ratio: 1; border-radius: 10px;
   display: flex; flex-direction: column;
   align-items: center; justify-content: center;
@@ -1665,16 +1673,8 @@ async function handleUpload() {
   let uploadedBytesBase = 0;
 
   try {
-    const initRes = await fetch('/api/drive-session', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ client: current.name, context })
-    });
-    if (!initRes.ok) throw new Error('Falha ao iniciar sessão com o Drive');
-    const { accessToken, folderId } = await initRes.json();
-
     for (const file of selectedFiles) {
-      await uploadFileResumable(file, accessToken, folderId, (loaded) => {
+      await uploadFileResumable(file, context, (loaded) => {
         const pct = Math.min(100, Math.round(((uploadedBytesBase + loaded) / totalBytes) * 100));
         setModalProgress(pct);
       });
@@ -1688,36 +1688,46 @@ async function handleUpload() {
     renderFileList();
   } catch (e) {
     console.error(e);
-    showModalError('Erro ao enviar. Verifique sua conexão e tente novamente.');
+    showModalError(e.message || 'Erro ao enviar. Verifique sua conexão e tente novamente.');
   }
 }
 
-function uploadFileResumable(file, accessToken, folderId, onProgress) {
+function uploadFileResumable(file, context, onProgress) {
   return new Promise(async (resolve, reject) => {
     try {
-      const sessionRes = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=resumable&fields=id,webViewLink', {
+      // 1) Pede ao nosso servidor para abrir a sessão de upload no Drive.
+      //    Isso roda no back-end (não no navegador) porque a resposta do
+      //    Google traz um cabeçalho (Location) que o navegador não
+      //    consegue ler de outro domínio — o servidor não tem essa limitação.
+      const initRes = await fetch('/api/drive-session', {
         method: 'POST',
-        headers: {
-          'Authorization': 'Bearer ' + accessToken,
-          'Content-Type': 'application/json; charset=UTF-8',
-          'X-Upload-Content-Type': file.type || 'application/octet-stream',
-          'X-Upload-Content-Length': String(file.size)
-        },
-        body: JSON.stringify({ name: file.name, parents: [folderId] })
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          client: current.name,
+          context,
+          filename: file.name,
+          mimeType: file.type || 'application/octet-stream',
+          size: file.size
+        })
       });
-      if (!sessionRes.ok) { reject(new Error('Falha ao iniciar upload: ' + sessionRes.status)); return; }
-      const uploadUrl = sessionRes.headers.get('Location');
-      if (!uploadUrl) { reject(new Error('Sessão de upload sem URL de destino')); return; }
+      if (!initRes.ok) {
+        const errBody = await initRes.json().catch(() => ({}));
+        reject(new Error('Não foi possível iniciar o envio: ' + (errBody.error || initRes.status)));
+        return;
+      }
+      const { uploadUrl } = await initRes.json();
+      if (!uploadUrl) { reject(new Error('O servidor não retornou uma URL de upload.')); return; }
 
+      // 2) Envia o arquivo inteiro direto para o Google (sem passar pelo Vercel).
       const xhr = new XMLHttpRequest();
       xhr.open('PUT', uploadUrl, true);
       xhr.setRequestHeader('Content-Type', file.type || 'application/octet-stream');
       xhr.upload.onprogress = (e) => { if (e.lengthComputable) onProgress(e.loaded); };
       xhr.onload = () => {
         if (xhr.status >= 200 && xhr.status < 300) { onProgress(file.size); resolve(); }
-        else reject(new Error('Upload falhou: ' + xhr.status));
+        else reject(new Error('O Google recusou o arquivo (código ' + xhr.status + ').'));
       };
-      xhr.onerror = () => reject(new Error('Erro de rede durante o upload'));
+      xhr.onerror = () => reject(new Error('Erro de rede durante o envio do arquivo.'));
       xhr.send(file);
     } catch (e) { reject(e); }
   });
