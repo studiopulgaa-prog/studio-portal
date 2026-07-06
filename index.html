@@ -1712,30 +1712,58 @@ async function uploadFileWithRetry(file, context, onProgress, maxAttempts) {
   throw lastError;
 }
 
+const UPLOAD_CHUNK_SIZE = 8 * 1024 * 1024; // 8MB — múltiplo de 256KB exigido pelo Google
+
 function uploadFileResumable(file, context, onProgress) {
-  return new Promise((resolve, reject) => {
+  return new Promise(async (resolve, reject) => {
     try {
-      const params = new URLSearchParams({
-        client: current.name,
-        context,
-        filename: file.name,
-        mimeType: file.type || 'application/octet-stream'
+      // 1) Pede ao nosso servidor pra abrir a sessão de upload no Drive.
+      //    É só metadados (nome do arquivo, pasta) — bem leve, sem limite
+      //    de tamanho, então passa tranquilo pelo Vercel.
+      const initRes = await fetch('/api/drive-session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          client: current.name,
+          context,
+          filename: file.name,
+          mimeType: file.type || 'application/octet-stream',
+          size: file.size
+        })
+      });
+      if (!initRes.ok) {
+        const errBody = await initRes.json().catch(() => ({}));
+        reject(new Error('Não foi possível iniciar o envio: ' + (errBody.error || initRes.status)));
+        return;
+      }
+      const { uploadUrl } = await initRes.json();
+      if (!uploadUrl) { reject(new Error('O servidor não retornou uma URL de upload.')); return; }
+
+      // 2) Envia o arquivo em pedaços (chunks) DIRETO para o Google — o
+      //    arquivo em si nunca passa pelo Vercel, então não existe limite
+      //    de tamanho aqui.
+      const total = file.size;
+      let offset = 0;
+
+      const sendChunk = () => new Promise((res, rej) => {
+        const end = Math.min(offset + UPLOAD_CHUNK_SIZE, total);
+        const chunk = file.slice(offset, end);
+        const xhr = new XMLHttpRequest();
+        xhr.open('PUT', uploadUrl, true);
+        xhr.setRequestHeader('Content-Range', `bytes ${offset}-${end - 1}/${total}`);
+        xhr.upload.onprogress = (e) => { if (e.lengthComputable) onProgress(offset + e.loaded); };
+        xhr.onload = () => {
+          if (xhr.status === 200 || xhr.status === 201) { onProgress(total); res(true); }
+          else if (xhr.status === 308) { offset = end; res(false); }
+          else rej(new Error('O Google recusou o envio (código ' + xhr.status + ').'));
+        };
+        xhr.onerror = () => rej(new Error('Erro de rede durante o envio do arquivo.'));
+        xhr.send(chunk);
       });
 
-      // Envia o arquivo pro NOSSO domínio (mesma origem — sem restrição de
-      // CORS). É o nosso servidor que repassa os bytes pro Google por trás.
-      const xhr = new XMLHttpRequest();
-      xhr.open('PUT', '/api/upload-stream?' + params.toString(), true);
-      xhr.setRequestHeader('Content-Type', file.type || 'application/octet-stream');
-      xhr.upload.onprogress = (e) => { if (e.lengthComputable) onProgress(e.loaded); };
-      xhr.onload = () => {
-        if (xhr.status >= 200 && xhr.status < 300) { onProgress(file.size); resolve(); return; }
-        let msg = 'O servidor recusou o arquivo (código ' + xhr.status + ').';
-        try { const body = JSON.parse(xhr.responseText); if (body.error) msg = body.error; } catch (e) {}
-        reject(new Error(msg));
-      };
-      xhr.onerror = () => reject(new Error('Erro de rede durante o envio do arquivo.'));
-      xhr.send(file);
+      let done = total === 0;
+      while (!done) { done = await sendChunk(); }
+      resolve();
     } catch (e) { reject(e); }
   });
 }
