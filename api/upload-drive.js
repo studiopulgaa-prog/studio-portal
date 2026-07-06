@@ -1,9 +1,7 @@
-const { google } = require('googleapis');
-const { IncomingForm } = require('formidable');
-const fs = require('fs');
+\const { google } = require('googleapis');
 
 export const config = {
-  api: { bodyParser: false },
+  api: { bodyParser: true },
 };
 
 function getAuth() {
@@ -18,9 +16,10 @@ function getAuth() {
 }
 
 async function findFolderByName(drive, name, parentId) {
+  const safeName = name.replace(/'/g, "\\'");
   const query = parentId
-    ? `name='${name}' and mimeType='application/vnd.google-apps.folder' and '${parentId}' in parents and trashed=false`
-    : `name='${name}' and mimeType='application/vnd.google-apps.folder' and trashed=false`;
+    ? `name='${safeName}' and mimeType='application/vnd.google-apps.folder' and '${parentId}' in parents and trashed=false`
+    : `name='${safeName}' and mimeType='application/vnd.google-apps.folder' and trashed=false`;
   const res = await drive.files.list({ q: query, spaces: 'drive', fields: 'files(id, name)', pageSize: 1 });
   return res.data.files && res.data.files.length > 0 ? res.data.files[0] : null;
 }
@@ -49,48 +48,54 @@ async function ensureDateFolder(drive, parentFolderId, dateContext) {
   return dateFolder;
 }
 
-async function uploadFile(drive, filepath, filename, mimeType, folderId) {
-  const fileMetadata = { name: filename, parents: [folderId] };
-  const media = { mimeType, body: fs.createReadStream(filepath) };
-  const res = await drive.files.create({ resource: fileMetadata, media, fields: 'id, webViewLink' });
-  return res.data;
-}
-
+// Este endpoint NÃO recebe os bytes do arquivo. Ele:
+// 1) garante a pasta do cliente/data no Drive
+// 2) abre a sessão de upload "resumable" do Google A PARTIR DO SERVIDOR
+//    (o servidor consegue ler o cabeçalho "Location" da resposta do Google;
+//    o navegador, por causa de CORS, não consegue ler esse cabeçalho de um
+//    domínio diferente — por isso a etapa de abertura da sessão precisa
+//    acontecer aqui, e não no navegador)
+// 3) devolve ao navegador só a URL final, que aí sim recebe o arquivo
+//    inteiro DIRETO do navegador para o Google, sem passar pelo Vercel.
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
   try {
+    const { client, context, filename, mimeType, size } = req.body || {};
+    if (!client) return res.status(400).json({ error: 'Nome do cliente é obrigatório' });
+    if (!filename) return res.status(400).json({ error: 'Nome do arquivo é obrigatório' });
+
     const auth = getAuth();
+    const tokenResponse = await auth.getAccessToken();
+    const accessToken = typeof tokenResponse === 'string' ? tokenResponse : tokenResponse.token;
+    if (!accessToken) throw new Error('Não foi possível obter access token do Google. Verifique as credenciais nas env vars do Vercel.');
+
     const drive = google.drive({ version: 'v3', auth });
+    const clientFolder = await ensureClientFolder(drive, client);
+    const dateFolder = await ensureDateFolder(drive, clientFolder.id, context || 'Sem contexto');
 
-    const form = new IncomingForm({ multiples: true, maxFileSize: 500 * 1024 * 1024 });
-
-    const { fields, files } = await new Promise((resolve, reject) => {
-      form.parse(req, (err, fields, files) => {
-        if (err) reject(err);
-        else resolve({ fields, files });
-      });
+    const initResponse = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=resumable&fields=id,webViewLink', {
+      method: 'POST',
+      headers: {
+        'Authorization': 'Bearer ' + accessToken,
+        'Content-Type': 'application/json; charset=UTF-8',
+        'X-Upload-Content-Type': mimeType || 'application/octet-stream',
+        'X-Upload-Content-Length': String(size || 0)
+      },
+      body: JSON.stringify({ name: filename, parents: [dateFolder.id] })
     });
 
-    const clientName = Array.isArray(fields.client) ? fields.client[0] : fields.client;
-    const dateContext = (Array.isArray(fields.context) ? fields.context[0] : fields.context) || 'Sem contexto';
-
-    if (!clientName) return res.status(400).json({ error: 'Client name required' });
-
-    const clientFolder = await ensureClientFolder(drive, clientName);
-    const dateFolder = await ensureDateFolder(drive, clientFolder.id, dateContext);
-
-    const fileList = Array.isArray(files.files) ? files.files : (files.files ? [files.files] : []);
-
-    const uploaded = [];
-    for (const f of fileList) {
-      const result = await uploadFile(drive, f.filepath, f.originalFilename, f.mimetype, dateFolder.id);
-      uploaded.push(result);
+    if (!initResponse.ok) {
+      const errText = await initResponse.text().catch(() => '');
+      throw new Error('Google recusou abrir a sessão de upload (' + initResponse.status + '): ' + errText.slice(0, 200));
     }
 
-    return res.status(200).json({ success: true, message: `${uploaded.length} arquivo(s) enviado(s) com sucesso`, files: uploaded });
+    const uploadUrl = initResponse.headers.get('location');
+    if (!uploadUrl) throw new Error('Google não retornou a URL de upload esperada.');
+
+    return res.status(200).json({ uploadUrl });
   } catch (error) {
-    console.error('Upload error:', error);
+    console.error('drive-session error:', error);
     return res.status(500).json({ error: error.message });
   }
 }
