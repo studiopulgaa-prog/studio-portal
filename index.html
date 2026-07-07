@@ -1674,7 +1674,7 @@ function renderFileList() {
 function removeFile(i) { selectedFiles.splice(i, 1); renderFileList(); }
 
 // ── UPLOAD DIRETO AO DRIVE (resumable, sem passar pelo Vercel) ─
-const UPLOAD_CONCURRENCY = 6; // quantos arquivos em paralelo (assume wifi rápido)
+const UPLOAD_CONCURRENCY = 3; // quantos arquivos em paralelo
 
 async function handleUpload() {
   if (!selectedFiles.length) return;
@@ -1746,7 +1746,7 @@ async function uploadFileWithRetry(file, context, onProgress, folderId, maxAttem
   throw lastError;
 }
 
-const UPLOAD_CHUNK_SIZE = 32 * 1024 * 1024; // 32MB — múltiplo de 256KB, otimizado pra wifi rápido
+const UPLOAD_CHUNK_SIZE = 8 * 1024 * 1024; // 8MB — múltiplo de 256KB exigido pelo Google
 
 function uploadFileResumable(file, context, onProgress, folderId) {
   return new Promise(async (resolve, reject) => {
