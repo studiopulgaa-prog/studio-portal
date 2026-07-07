@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#1A0F0A">
 <title>Studio Pulga — Portal do Cliente</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -33,6 +33,7 @@ html, body {
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
+  touch-action: manipulation;
 }
 
 /* BG TEXTURE */
@@ -258,6 +259,7 @@ body::before {
 /* TAB PANELS */
 .tab-panel { display: none; padding: 28px 20px 20px; animation: fadeUp 0.35s ease; }
 .tab-panel.active { display: block; }
+.admin-content { display: block; animation: fadeUp 0.35s ease; }
 
 /* PANEL HEADER — títulos de seção estilo A: serif grande + subtítulo abaixo */
 .panel-title {
@@ -529,6 +531,14 @@ body::before {
   display: none; margin-top: 12px;
   padding: 12px 16px; border-radius: 10px;
   font-size: 0.84rem; text-align: center;
+}
+.upload-btn-fixed {
+  position: fixed;
+  left: 20px; right: 20px; bottom: 100px;
+  width: auto; max-width: 440px; margin: 0 auto;
+  justify-content: center;
+  z-index: 150;
+  box-shadow: 0 12px 32px rgba(61,21,9,0.35);
 }
 .status-ok { background: rgba(74,122,70,0.08); color: var(--green); border: 1px solid rgba(74,122,70,0.2); }
 .status-err { background: rgba(204,51,51,0.08); color: var(--red); border: 1px solid rgba(204,51,51,0.2); }
@@ -869,7 +879,7 @@ body::before {
         <div class="panel-title">Seus arquivos</div>
         <div class="panel-subtitle">Envie fotos, vídeos e documentos direto para o Drive do studio, sem limite de espera.</div>
       </div>
-      <input type="file" id="fileInput" multiple style="display:none;">
+      <input type="file" id="fileInput" multiple accept="image/*,video/*,.pdf,.doc,.docx" style="display:none;">
       <div class="drop-zone" id="dropZone" onclick="document.getElementById('fileInput').click()">
         <span class="drop-icon">📁</span>
         <div class="drop-text">Clique ou arraste arquivos</div>
@@ -879,8 +889,8 @@ body::before {
         <label class="field-label" for="context">Contexto</label>
         <input type="text" id="context" class="field-input" placeholder="Ex: Berlim, Reunião">
       </div>
-      <div id="fileList"></div>
-      <button id="uploadBtn" onclick="handleUpload()" class="btn-primary" style="width:100%;justify-content:center;display:none;">
+      <div id="fileList" style="padding-bottom: 90px;"></div>
+      <button id="uploadBtn" onclick="handleUpload()" class="btn-primary upload-btn-fixed" style="display:none;">
         <span>↑</span> Enviar Arquivos
       </button>
       <div class="status-msg" id="statusMsg"></div>
@@ -1182,7 +1192,7 @@ body::before {
       <div class="welcome-name">Clientes</div>
       <div class="welcome-sub">Cadastre, edite e remova os acessos dos clientes do portal.</div>
     </div>
-    <div class="tab-panel active" style="padding:28px 20px 20px;">
+    <div class="admin-content" style="padding:28px 20px 20px;">
       <div id="admin-sync-status" style="display:none;margin-bottom:14px;padding:10px 14px;border-radius:10px;font-size:0.8rem;text-align:center;"></div>
       <div class="obras-grid" id="clientes-grid">
         <div class="loading-obras">Carregando clientes...</div>
@@ -1595,7 +1605,7 @@ async function deleteCliente(id) {
 // ── NAV ─────────────────────────────────────────────────────
 function switchTab(id, btn) {
   document.querySelectorAll('.dock-item').forEach(b => b.classList.remove('active'));
-  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('#client-screen .tab-panel').forEach(p => p.classList.remove('active'));
   if (btn) btn.classList.add('active');
   document.getElementById('panel-' + id).classList.add('active');
   window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1664,22 +1674,46 @@ function renderFileList() {
 function removeFile(i) { selectedFiles.splice(i, 1); renderFileList(); }
 
 // ── UPLOAD DIRETO AO DRIVE (resumable, sem passar pelo Vercel) ─
+const UPLOAD_CONCURRENCY = 6; // quantos arquivos em paralelo (assume wifi rápido)
+
 async function handleUpload() {
   if (!selectedFiles.length) return;
   const context = document.getElementById('context').value.trim() || 'Sem contexto';
 
   openUploadModal();
-  const totalBytes = selectedFiles.reduce((s, f) => s + f.size, 0) || 1;
-  let uploadedBytesBase = 0;
+  const files = selectedFiles;
+  const totalBytes = files.reduce((s, f) => s + f.size, 0) || 1;
+  const progressByFile = new Array(files.length).fill(0);
+  let cachedFolderId = null; // achado uma vez, reaproveitado pelo resto da leva
+  let firstError = null;
+  let nextIndex = 0;
+
+  const updateTotalProgress = () => {
+    const sum = progressByFile.reduce((a, b) => a + b, 0);
+    setModalProgress(Math.min(100, Math.round((sum / totalBytes) * 100)));
+  };
+
+  async function worker() {
+    while (true) {
+      const i = nextIndex++;
+      if (i >= files.length || firstError) return;
+      const file = files[i];
+      try {
+        const folderId = await uploadFileWithRetry(file, context, (loaded) => {
+          progressByFile[i] = loaded;
+          updateTotalProgress();
+        }, cachedFolderId);
+        if (folderId && !cachedFolderId) cachedFolderId = folderId;
+      } catch (e) {
+        if (!firstError) firstError = e;
+      }
+    }
+  }
 
   try {
-    for (const file of selectedFiles) {
-      await uploadFileWithRetry(file, context, (loaded) => {
-        const pct = Math.min(100, Math.round(((uploadedBytesBase + loaded) / totalBytes) * 100));
-        setModalProgress(pct);
-      });
-      uploadedBytesBase += file.size;
-    }
+    const workerCount = Math.min(UPLOAD_CONCURRENCY, files.length);
+    await Promise.all(Array.from({ length: workerCount }, worker));
+    if (firstError) throw firstError;
 
     setModalProgress(100);
     showModalSuccess();
@@ -1694,13 +1728,13 @@ async function handleUpload() {
 
 // Tenta enviar o arquivo até 2 vezes — se a primeira tentativa falhar por
 // instabilidade de rede, tenta de novo automaticamente antes de desistir.
-async function uploadFileWithRetry(file, context, onProgress, maxAttempts) {
+// Retorna o ID da pasta usada, para ser reaproveitado pelos próximos arquivos.
+async function uploadFileWithRetry(file, context, onProgress, folderId, maxAttempts) {
   maxAttempts = maxAttempts || 2;
   let lastError;
   for (let attempt = 1; attempt <= maxAttempts; attempt++) {
     try {
-      await uploadFileResumable(file, context, onProgress);
-      return;
+      return await uploadFileResumable(file, context, onProgress, folderId);
     } catch (e) {
       lastError = e;
       if (attempt < maxAttempts) {
@@ -1712,14 +1746,15 @@ async function uploadFileWithRetry(file, context, onProgress, maxAttempts) {
   throw lastError;
 }
 
-const UPLOAD_CHUNK_SIZE = 8 * 1024 * 1024; // 8MB — múltiplo de 256KB exigido pelo Google
+const UPLOAD_CHUNK_SIZE = 32 * 1024 * 1024; // 32MB — múltiplo de 256KB, otimizado pra wifi rápido
 
-function uploadFileResumable(file, context, onProgress) {
+function uploadFileResumable(file, context, onProgress, folderId) {
   return new Promise(async (resolve, reject) => {
     try {
       // 1) Pede ao nosso servidor pra abrir a sessão de upload no Drive.
-      //    É só metadados (nome do arquivo, pasta) — bem leve, sem limite
-      //    de tamanho, então passa tranquilo pelo Vercel.
+      //    Se já sabemos a pasta (de um arquivo anterior da mesma leva),
+      //    mandamos o ID dela — o servidor pula a busca e vai direto ao
+      //    ponto, o que faz muita diferença quando são dezenas de arquivos.
       const initRes = await fetch('/api/drive-session', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -1728,7 +1763,8 @@ function uploadFileResumable(file, context, onProgress) {
           context,
           filename: file.name,
           mimeType: file.type || 'application/octet-stream',
-          size: file.size
+          size: file.size,
+          folderId: folderId || undefined
         })
       });
       if (!initRes.ok) {
@@ -1736,7 +1772,7 @@ function uploadFileResumable(file, context, onProgress) {
         reject(new Error('Não foi possível iniciar o envio: ' + (errBody.error || initRes.status)));
         return;
       }
-      const { uploadUrl } = await initRes.json();
+      const { uploadUrl, folderId: resolvedFolderId } = await initRes.json();
       if (!uploadUrl) { reject(new Error('O servidor não retornou uma URL de upload.')); return; }
 
       // 2) Envia o arquivo em pedaços (chunks) DIRETO para o Google — o
@@ -1782,7 +1818,7 @@ function uploadFileResumable(file, context, onProgress) {
 
       let done = total === 0;
       while (!done) { done = await sendChunk(); }
-      resolve();
+      resolve(resolvedFolderId);
     } catch (e) { reject(e); }
   });
 }
